@@ -2,7 +2,7 @@
 
 | Monday               | Wednesday            | Module | Description                     | Instructor         | Week |
 |----------------------|----------------------|--------|---------------------------------|--------------------|------|
-| January 15     | January 17     | 0      | Syllabus/Setup                  | David              | 1    |
+| January 15     | January 17     | 0      | Syllabus/Setup                   | David              | 1    |
 | January 22     | January 24     | 1      | chatGPT                         | Multiple           | 2    |
 | January 29     | January 31     | 2      | Rstudio                         | Erin               | 3    |
 | February 5     | February 7     | 3      | Files and Folders               | Shady              | 4    |
