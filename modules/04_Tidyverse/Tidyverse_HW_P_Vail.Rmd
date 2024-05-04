@@ -1,0 +1,200 @@
+---
+title: "Homework Tidy Verse"
+author: "Patricia Vail"
+output: html_document
+date: "2024-02-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Load libraries
+
+```{r}
+library(tidyverse)
+```
+
+#### Read in data 
+
+```{r}
+getwd()
+#Load data
+surveys <- read_csv("/Users/pvail/Documents/Courses/Comp Bio/TidyVerse/Class Repo/CM515-course-2024/modules/04_Tidyverse/diversity.csv")
+```
+
+### Tidyverse Day 1
+
+#### Q1: What is the class of the object surveys? 
+
+```{r}
+#Q1
+class(surveys)
+str(surveys)
+```
+Surveys is a data frame 
+
+#### Q2: How many rows and how many columns are in the object?
+
+Rows: 34786
+Columns: 13
+
+#### Q2: Create a data.frame (surveys_200) containing only the data in row 200 of the surveys dataset.
+
+```{r}
+#Q2
+surveys[200,]
+```
+
+#### Q3: Create a data.fram (surveys_last) containing only the data in row 200 of the surveys dataset using nrow() instead of the row number. ?nrow
+
+```{r}
+#Q3
+nrows <- nrow(surveys)
+surveys_last <- surveys[nrows,]
+```
+
+#### Q4: Change the columns taxa and genus in the surveys data frame into a factor.
+
+```{r}
+#Q4
+surveys$taxa <- factor(surveys$taxa)
+str(surveys)
+surveys$genus <- factor(surveys$genus)
+str(surveys)
+```
+
+#### Q5: Using the functions you learned before
+
+##### Q5 A: How many rabbits were observed? 
+
+75 rabbits observed
+```{r}
+#Q5A
+table(surveys$taxa)
+```
+
+
+##### Q5 B: How many different genera are in the genus column?
+There are 26 genera in the genus column
+```{r}
+#Q5B
+table(surveys$genus)
+```
+
+#### Q6: Create new variable 'sex' by converting surveys$sex to a factor. Use addNA to add a factor level to 'sex' variable. Using the 'sex' variable, rename "NA", "F", and "M" factors to "undetermined", "female", and "male" respectively. Plot sex variable. 
+
+```{r}
+#Q6
+surveys$sex <- factor(surveys$sex)
+sex <- surveys$sex
+sex <- addNA(sex)
+levels(sex)
+levels(sex)[3] <- "undetermined"
+levels(sex)[2] <- "male"
+levels(sex)[1] <- "female"
+plot(sex)
+```
+
+#### Q7: Recreate the barplot such that "undetermined" is first (before "female").
+
+```{r}
+#Q7
+sex <- factor(sex, levels = c("undetermined", "female", "male"))
+plot(sex)
+```
+
+#### Q8: Using pipes, subset the surveys data to include animals collected before 1995 and retain only the columns year, sex, and weight. View the tail() of the data.frame.
+
+```{r}
+#Q8
+surveys %>%
+  filter(year < 1995) %>%
+  select(year, sex, weight) %>%
+  tail()
+```
+
+### Tidyverse Day 2
+
+#### Q9: Create a new data frame from the surveys data that meets the following criteria:
+
+##### Contains only the species_id column and a new column called hindfoot_cm which contains the hindfoot_length values (currently in mm) converted to centimeters. In this hindfoot_cm column, there are no NAs and all values are less than 3.\
+
+#### View the head() of the data.frame. 
+
+##### Hint: Think about how the commands should be ordered to produce this data frame! 
+
+```{r}
+#Q9 
+
+surveys <- read_csv("/Users/pvail/Documents/Courses/Comp Bio/TidyVerse/Class Repo/CM515-course-2024/modules/04_Tidyverse/diversity.csv", show_col_types = FALSE)
+
+surveys_new <-surveys %>%
+  mutate(hindfoot_cm = hindfoot_length /10) %>%
+  filter(hindfoot_cm < 3) %>%
+  filter(!is.na(hindfoot_length)) %>%
+  select(species_id, hindfoot_cm)
+surveys_new %>% head()
+
+```
+
+#### Q10: How many animals were caught in each plot_type surveyed?
+
+```{r}
+#Q10
+
+surveys %>%
+  #filter(plot_type != "Control")
+  group_by(plot_type) %>%
+  summarize("# Animals Caught" = n())
+```
+
+#### Q11: Use group_by() and summarize() to find the mean, min, and max hindfoot length for each species (using species_id). Also add the number of observations (hint: see ?n).
+
+```{r}
+#Q11
+surveys %>%
+  group_by(species_id) %>%
+  filter(!is.na(hindfoot_length)) %>%
+  summarize(mean_length = mean(hindfoot_length),
+            min_length = min(hindfoot_length), max_length = max(hindfoot_length), n = n())
+
+```
+
+#### Q12: What was the heaviest animal measured in each year? Return the columns year, genus, species_id, and weight.
+
+```{r}
+#Q12
+
+surveys %>%
+  select(year, genus, species_id, weight) %>%
+  filter(!is.na(weight)) %>%
+  group_by(year) %>%
+  filter(weight == max(weight))
+  
+  
+```
+
+#### Q13: Reshape the surveys data frame with year as columns, plot_id as rows, and the number of genera per plot as the values. You will need to summarize before reshaping, and use the function n_distinct() to get the number of unique genera within a particular chunk of data. It’s a powerful function! See ?n_distinct for more.
+
+```{r}
+#Q13
+surveys_new <- surveys %>% 
+  group_by(year,plot_id) %>%
+  summarize(n = n_distinct(genus)) %>%
+  pivot_wider(names_from = year, values_from = n)
+surveys_new
+```
+
+#### Q14: Now take that data frame and pivot_longer() it, so each row is a unique plot_id by year combination.
+
+```{r}
+#Q14
+surveys_new %>%
+  pivot_longer(names_to = "year", values_to = "n", cols = -plot_id)
+```
+
+
+
+
+

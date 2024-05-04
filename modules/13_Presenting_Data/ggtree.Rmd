@@ -1,0 +1,157 @@
+---
+title: "Visualizing Phylogenetic Trees and Associated Data with ggtree"
+output:
+  html_document:
+    toc: true
+---
+
+## Background
+Tree-like representations are a common visualization technique. Examples include description of relationships in the tree of life (phylogenies), summaries of the relationships among large protein families, and depicting similarities in expression patterns or biological samples from an RNA-seq dataset. It also common that tree datasets will have additional data associated with parts of the tree, such as phenotypic data for each species in a phylogeny. Building plots with these associated datasets in a way that is compatible with the structure of a visualized tree can be a challenge. Fortunately, there are packages in R that can read, store, manipulate tree data structures, as well as annotate them and align them with plots of associated datasets.
+
+This exercise will introduce you to working with [ggtree](https://guangchuangyu.github.io/software/ggtree/) and associated R packages. The exercise is based on unpublished data from Shady Kuster and [adapted from a workflow developed by Evan Forsythe](https://github.com/EvanForsythe/qCMB_workshop).
+
+## Slides
+Slides from today's presentation are [available for download here](DataVisualizationI.pdf).
+
+## Objectives
+The goal of this exercise is to learn how to import phylogenetic trees into R, visualize them, and plot data in ways that is properly associated with the corresponding nodes and tips of the tree.
+
+## Software and Dependencies
+
+- R including the ggplot2, ggtree, and viridis packages.
+- Optional: Rstudio
+
+## Protocol
+
+### 1. Open the R console and load the necessary packages
+Launch an R or RStudio console session and install/load libraries.
+```{r message=FALSE}
+library(ggplot2)
+library(viridis)
+```
+If you receive an error because either or both of these packages are not installed on your machine, you can install them with the corresponding command: `install.packages("ggplot2")` or `install.packages("viridis")`.
+
+We will also need to load the `ggtree` package. If not already installed, it can be obtained via Bioconductor as follows.
+
+```{r message=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
+}
+
+if (!requireNamespace("ggtree", quietly = TRUE)){
+  BiocManager::install("ggtree")
+}
+library(ggtree)
+```
+
+
+### 2. Import phylogenetic tree from a newick file
+We can use the `read.tree` function from the `ggtree` package to read in and store a phylogenetic tree from a file. Our file (tree.nwk) [can be downloaded here](data/tree.nwk). This contains the results of a phylogenetic analysis of MutS2 genes from plants and bacteria.
+
+Read in the data with the following command (you may need to change your working directory or provide the path to where you stored this data file):
+
+```{r}
+tree = ggtree::read.tree(file = "tree.nwk")
+```
+\
+
+Check out the structure of how this tree object is stored in R:
+
+```{r}
+tree
+```
+\
+
+### 3. Plot the tree using ggtree  
+The `ggtree` packages builds off of `ggplot` code to visualize phylogenetic trees.
+
+```{r}
+ggplot(tree) + geom_tree() + geom_tiplab() + theme_tree()
+```
+
+\
+\
+
+You can use some familiar `ggplot` commands and parameters to control the visualization.
+
+<pre class="r"><code>ggplot(tree) + geom_tree(<b>color="firebrick", size=0.5, linetype="dotted", layout="roundrect"</b>) + geom_tiplab(<b>size=3</b>) + theme_tree()</code></pre>
+
+```{r echo=FALSE}
+ggplot(tree) + geom_tree(color="firebrick", size=0.5, linetype="dotted", layout="roundrect") + geom_tiplab(size=3) + theme_tree()
+```
+
+
+### 4. Root the tree
+The newick file that we imported contained an unrooted tree, so the visualizations above were arbitrarily rooted. To more accurately represent the history of this gene family, we can set *Helicobacter pylori* as the outgroup to root the tree.
+```{r}
+tree_rooted = ape::root(tree, outgroup = "Helicobacter_pylori_AAD07685.1", resolve.root=TRUE)
+
+ggplot(tree_rooted) + geom_tree() + geom_tiplab() + theme_tree()
+```
+
+Note that some of our tip lables have been getting cutoff. That is because `ggtree` sets the default plot size based on the size of the tree without considering the extra label length. We can work around this problem by adding some horizontal expansion to the plot area with `hexpand`. Alternatively, we could manually set the horizontal dimensions with `xlim`.
+
+<pre class="r"><code>ggplot(tree_rooted) + geom_tree() + geom_tiplab() + theme_tree() <b>+ hexpand(0.25)</b></code></pre>
+
+```{r echo=FALSE}
+ggplot(tree_rooted) + geom_tree() + geom_tiplab() + theme_tree() + hexpand(0.25)
+```
+
+You might notice that there is an ancient duplication of this gene such that all green plants and algae represented in this tree have one of each resulting MutS2 gene copy. We can annotate these clades on the tree using `geom_hilight` and `geom_cladelab`.
+
+```{r}
+ggplot(tree_rooted) + geom_tree() + geom_tiplab(size=3) + theme_tree() + hexpand(0.25) + 
+  geom_hilight(node=36, fill="chartreuse4", alpha=.3, type = "gradient", to.bottom=TRUE, extend=1) + 
+  geom_hilight(node=44, fill="chartreuse4", alpha=.3, type = "gradient", to.bottom=TRUE, extend=1) + 
+  geom_cladelab(node=36, label = "MutS2a", angle=270, hjust = "center", offset=1, offset.text=0.1) + 
+  geom_cladelab(node=44, label = "MutS2b", angle=270, hjust = "center", offset=1, offset.text=0.1)
+```
+
+
+### 5. Read in data associated with the genes represented in the tree
+
+We can read in additional data related to the proteins encoded by the genes in this tree. Our data file (gene_data.txt) [can be downloaded here](data/gene_data.txt). This file contains information about annotated protein domains in each species as well as *in silico* predictions of whether the protein is targeted to plastids in plant cells.
+
+```{r}
+gene_data = read.delim("gene_data.txt")
+
+gene_data[1:5,]
+```
+
+\
+\
+
+### 6. Make paneled plots linking associating gene-specifci data with position in the tree
+
+The `ggtree` package has multiple tools that will add data plots alongside a tree visualization and automatically arrange them such that the  data elements are plotted next to the corresponding tip on the tree. The `facet_plot` command from this package can be used to add plots next to an existing tree, using the typical input parameters and geometries for `ggplot2`. The following code will generate flanking plots showing protein domain architecture and predicted plastid protein for each sequence in the tree.
+
+```{r}
+
+#store the tree
+p1 = ggplot(tree_rooted, aes(x,y)) + geom_tree() + geom_tiplab(size=2.5) + hexpand(1.5) + theme_tree()
+
+#add a facet with lines corresponding to the length of each protein
+p2 = facet_plot(p1, panel = "Domains", data = gene_data, geom = geom_segment, mapping = aes(x=0, xend=Seq_Length, y=y, yend=y), size=0.5, color='black')
+
+#add the domains on top of those lines
+p3 = facet_plot(p2, panel = "Domains", data = gene_data, geom=geom_segment, aes(x=Domain_Start, xend=Domain_End, y=y, yend=y, col=Domain_Name), size=3) + theme(legend.position = "bottom") + scale_color_viridis(discrete = TRUE)
+
+#add another facet with a bar graph showing the probability of plastid targeting
+p4 = facet_plot(p3, panel = "Plastid Targeting", data = gene_data, geom=geom_col, aes(x=Plastid_Targeting), orientation = 'y', fill="chartreuse4") + theme(legend.position = "bottom")
+
+p4
+```
+
+## Additional resources for ggtree
+
+- [ggtree documentation](https://guangchuangyu.github.io/software/ggtree/)
+
+- [Guangchuang Yu Data Integration Manipulation and Vizualization of Phylogenetic Trees](https://yulab-smu.top/treedata-book/)
+
+- [Evan Forsythe ggtree workshop materials](https://github.com/EvanForsythe/qCMB_workshop)
+
+\
+\
+
+
+

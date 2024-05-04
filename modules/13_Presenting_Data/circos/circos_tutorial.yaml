@@ -1,0 +1,8 @@
+name: circos_tutorial
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::circos=0.69.9
+variables:
+  PERL5LIB: $CONDA_PREFIX/lib/perl5/site_perl

@@ -1,0 +1,96 @@
+1. The purpose is to build curiosity. Students can imagine what R packages will work for their individual goals and projects.
+
+A. Answer the following: What is your field of research? You can use a rotation project or in-lab project. If you don't have a designated field of research, what is a field you would like to move into in the future?
+
+I am interested in how plants have evolved abiotic stress resistance, particularly when it comes to nuclear-plastid-mitochondrial genome interactions. 
+
+
+B. Think about the research you would like to do. Use the Bioconductor Website to explore topics that are relevant to you. Answer the following: What are the names and url's of 2 - 3 packages you would be interested to learn more about?
+
+  edgeR https://bioconductor.org/packages/edgeR
+  
+  MungeSumstats https://bioconductor.org/packages/MungeSumstats
+  
+  Rsubread https://doi.org/10.1093/nar/gkz114
+  
+
+C. Evaluate the documentation your packages have available. Compare the documentation between the 2 - 3 packages you selected. Answer: Which packages appear easier to learn and why?
+
+The Rsubread package documentation includes a vignette, a users guide, a reference manual and version update documentation. The   vignette thoroughly explains the capabilities of the package. The users guide goes into granule detail of the programs include in the packages and has a nice table of contents for quick reference to the section needed. The reference manual has well organized code chunks for easy copy paste. 
+All of the Rsubread documentation was developed between 2022-2024 , so is very current. In general it appears to be very user friendly. 
+
+The mungeSumstats package documentation includes a docker, overview, open gwas ( for referencing gwas datasets), reference manual and new/version updates. 
+All of the documentation is thorough and current. In general it appears to be more useful for experienced R users as it is jargon heavy and not as beginner friendly. 
+
+Edge R documentation includes a brief intro document, users guide, reference manual and new/version updates. 
+Edge R has the most comprehensive documentation of the 3 packages that I selected. Its user guide and reference manual both exceed 150 pages of documentation and are very well organized. This package was created in 2008 and had revision in late 2023. It appears to be a well refined and user friendly. 
+
+
+2.  Let's explore R-studio a little bit by learning about shortcut keys. Try the following and report what happens: (answers in words, phrases, or short sentences)*
+
+A. What happens when you press Alt+Shift+K on a PC/Linux or Option+Shift+K on a Mac?
+
+Key board ShortCut Quick Reference
+
+B. What happens when you are working on the "Console" and you press the up arrow?
+
+It goes back to your previous commands 
+
+C. What happens when you are working on the "Console" and you press CTRL+L?
+
+It clears the console 
+
+D. What shortcut key helps you escape out of an executed command on the "Console"? For example, try executing a sleep function. This puts R to sleep for 5 minutes. (in other words - What would you press to return to the prompt before 5 minutes is complete?)
+
+Esc
+
+
+3.  We learned that vectors come in different classes depending on the data type they house. Answer the following in phrases or sentences.
+
+A. What are the classes of each of these vectors?
+users <- c("alvin", "viet", "leila") logins <- c(12, 5, 34)
+
+users: character
+logins: numeric
+
+B. If we merge these vectors together into super_vector by concatenating them together (below), what is the class of super_vector? Why do you think this happened?
+super_vector <- c(users, logins)
+
+character vector - It took the charcter class that makes logical sense class 
+
+C. How would you force super_vector into a numeric sub-class? write the line of code What happens? copy the output and write a sentence explanation
+
+ as.numeric(super_vector)
+[1] 12  5 34 NA NA NA
+Warning message:
+NAs introduced by coercion 
+
+When you have two classes of vectors that are charcter and numeric , it makes more logical sense to classify them as a charcter, iE; the number 12 can be represented as a charcter , but "house"" can not be represented as a number and become "NA". It is coerced into being something it logically isnt. 
+
+
+4. Students will become familiar with a few basic R objects - data frames .Students will execute a few basic R functions
+
+Heather has written some code to create a data frame with columns for "languages", "greetings", and "partings". Each line of her code except the last line has a bug, or error. Can you de-bug Heather's code? Submit the re-written code.
+
+# Heather's code:
+languages <- c("English", "Spanish", "Japanese", "French")
+greetings_ <- c("hello", "hola", "ohio", "bonjour")
+partings < c("bye", "adios", "mata", "salut")
+dictionary <- data.frame(languages, greetings_, partings)
+dim(dictionary)
+dictionary
+
+5. Let's practice importing some data. Here is a real supplementary dataset that my lab recently published for a manuscript.
+
+> signal_to_noise <- read.csv("/Users/pvail/Documents/Courses/Comp Bio/CM515/Module 2/Table_S4_Signal_to_noise_quantification_table.csv")
+> str(signal_to_noise)
+'data.frame':	120 obs. of  7 variables:
+ $ image_name         : chr  "210127_Image_01" "210127_Image_02" "210127_Image_03" "210127_Image_04" ...
+ $ buffer             : chr  "Stellaris" "Stellaris" "Stellaris" "Stellaris" ...
+ $ transcript         : chr  "erm-1" "erm-1" "erm-1" "erm-1" ...
+ $ average_snr        : num  7.32 8.46 7.65 7.23 7.11 ...
+ $ snr_stdv           : num  2.54 2.82 2.82 2.37 2.58 ...
+ $ lower_95_confidence: num  7.24 8.27 7.51 7.15 7.02 ...
+ $ upper_95_confidence: num  7.4 8.65 7.78 7.31 7.2 ...
+ 
+ My path name is realllllly long!!!!

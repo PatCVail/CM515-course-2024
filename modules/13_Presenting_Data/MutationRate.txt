@@ -1,0 +1,37 @@
+MutationType	Genotype	Genome	Replicate	MutationRate
+Substitutions	msh1	Mito	1	1.29E-06
+Substitutions	msh1	Mito	2	1.20E-06
+Substitutions	msh1	Mito	3	1.93E-06
+Substitutions	radA	Mito	1	1.49E-07
+Substitutions	radA	Mito	2	2.65E-07
+Substitutions	radA	Mito	3	1.45E-07
+Substitutions	Wild Type	Mito	1	6.50E-08
+Substitutions	Wild Type	Mito	2	3.36E-08
+Substitutions	Wild Type	Mito	3	6.10E-08
+Substitutions	msh1	Plastid	1	3.45E-06
+Substitutions	msh1	Plastid	2	5.88E-06
+Substitutions	msh1	Plastid	3	4.15E-06
+Substitutions	radA	Plastid	1	5.05E-08
+Substitutions	radA	Plastid	2	3.78E-08
+Substitutions	radA	Plastid	3	3.70E-08
+Substitutions	Wild Type	Plastid	1	1.00E-08
+Substitutions	Wild Type	Plastid	2	6.90E-09
+Substitutions	Wild Type	Plastid	3	5.00E-09
+Indels	msh1	Mito	1	3.38E-06
+Indels	msh1	Mito	2	3.17E-06
+Indels	msh1	Mito	3	2.71E-06
+Indels	radA	Mito	1	1.76E-07
+Indels	radA	Mito	2	1.77E-07
+Indels	radA	Mito	3	1.76E-07
+Indels	Wild Type	Mito	1	4.33E-08
+Indels	Wild Type	Mito	2	1.12E-08
+Indels	Wild Type	Mito	3	1.69E-08
+Indels	msh1	Plastid	1	1.33E-05
+Indels	msh1	Plastid	2	1.73E-05
+Indels	msh1	Plastid	3	1.47E-05
+Indels	radA	Plastid	1	1.12E-08
+Indels	radA	Plastid	2	6.05E-08
+Indels	radA	Plastid	3	3.70E-08
+Indels	Wild Type	Plastid	1	5.63E-08
+Indels	Wild Type	Plastid	2	6.90E-09
+Indels	Wild Type	Plastid	3	1.00E-08
